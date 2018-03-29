@@ -4,27 +4,25 @@
 #include <vector>
 #include <list>
 #include <memory>
+#include "node.h"
 using namespace std;
 
 
 template <typename T>
-class FibHeap
+class FibbonacciHeap
 {
-  public:
+public:
+   typedef Node<T>* node_ptr;
 
-   FibHeap()
-   {
-      min = nullptr;
-   }
+   FibbonacciHeap(): min(nullptr) {}
 
    void insert(int key, T val)
    {
-      shared_ptr<Node> n = shared_ptr<Node>(new Node(key, val));
-      root_list.insert(root_list.begin(), n);
-      if (min == nullptr)
+      node_ptr* n = new node_ptr(key, val);
+      root_list = merge(n, root_list);
+      if (n->key < min->key) {
 	 min = n;
-      if (min->key > key)
-	 min = n;
+      }
    }
 
    T get_min()
@@ -39,47 +37,38 @@ class FibHeap
 
    void decrease_key(int x);
 
-   //private:
+private:
    
-   class Node
+   Node<T>* merge(node_ptr n1, node_ptr n2)
    {
-     public:      
-     Node(int k, T v): key(k), value(v), parent(nullptr), degree(0), marked(false)
-      {}
-      bool marked;
-      int key;
-      T value;
-      int degree;
-      Node* parent;
-      vector<shared_ptr<Node>> children;
-
-      void make_child(shared_ptr<Node> n)
-      {
-	 n->parent = this;
-	 children.push_back(n);
-	 if (n->degree >= degree)
-	    degree = 1 + n->degree;
-      }
-   };
-
-   void consolidate()
-   {
+      if (n1 == nullptr && n2 == nullptr)
+	 return nullptr;
       
+      if (n1 == nulltpr) {
+	 n2->next = n2;
+	 n2->prev = n2;
+	 return n2;
+      }
+      else if (n2 == nullptr) {
+	 n1->next = n1;
+	 n1->prev = n2;
+	 return n1;
+      }
+      
+      if (n1->value < n2->value) { 
+	 n1->make_child(n2);
+	 return n1;
+      }
+      else {
+	 n2->prev = n1->prev;
+	 n2->next = n1->next;
+	 n2->make_child(n1);
+	 return n2;
+      }
    }
 
-   typedef typename list<shared_ptr<Node>>::iterator list_iterator;
-   typedef shared_ptr<Node> node_ptr;
-   
-   void merge(list_iterator pnt_it, list_iterator child_it)
-   {
-      node_ptr pptr = *pnt_it;
-      node_ptr cptr = *child_it;
-      pptr->make_child(cptr);
-      root_list.erase(child_it);
-   }
-
-   node_ptr min;
-   list<node_ptr> root_list;
+   Node<T>* min;
+   Node<T>* root_list;
    
 };
    
