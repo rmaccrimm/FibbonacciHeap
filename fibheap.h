@@ -1,5 +1,5 @@
-#ifndef FIBHEAP_H
-#define FIBHEAP_H
+#ifndef FIBONACCIHEAP_H
+#define FIBONACCIHEAP_H
 
 #include <vector>
 #include <list>
@@ -9,7 +9,7 @@ using namespace std;
 
 
 template <typename T>
-class FibbonacciHeap
+class FibonacciHeap
 {
 public:
    typedef Node<T>* node_ptr;
